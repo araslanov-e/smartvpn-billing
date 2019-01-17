@@ -20,18 +20,12 @@ addons:
       - google-chrome-stable
 
 services:
-  - xvfb
   - postgresql
   - redis-server
 
 before_install:
   - cp config/database.yml.sample config/database.yml
   - cp .env.test .env
-
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - sleep 3
 
 script:
   - bundle exec rake db:setup
