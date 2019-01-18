@@ -14,7 +14,10 @@ matrix:
 
 jobs:
   include:
-    - name: 'Perform DB setup (with seeds)'
+    - stage: db_setup
+      name: 'Perform DB setup (with seeds)'
+      rvm:
+        - 2.5.3
       services:
         - postgresql
         - redis-server
@@ -23,7 +26,10 @@ jobs:
       script:
         - bundle exec rake db:setup
 
-    - name: 'Tests'
+    - stage: tests
+      name: 'Tests'
+      rvm:
+        - 2.5.3
       addons:
         apt:
           sources:
@@ -44,3 +50,7 @@ jobs:
         - bundle exec rake db:schema:load
       script:
         - bundle exec rspec
+
+stages:
+  - db_setup
+  - tests
