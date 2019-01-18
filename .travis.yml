@@ -12,26 +12,35 @@ matrix:
     - rvm: 2.1.1
     - rvm: 2.6.0
 
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+jobs:
+  include:
+    - name: 'Perform DB setup (with seeds)'
+      services:
+        - postgresql
+        - redis-server
+      before_install:
+        - cp config/database.yml.sample config/database.yml
+      script:
+        - bundle exec rake db:setup
 
-services:
-  - postgresql
-  - redis-server
-
-before_install:
-  - cp config/database.yml.sample config/database.yml
-  - cp .env.test .env
-  - sudo apt-get update
-  - sudo apt-get install chromium-chromedriver
-
-before_script:
-  - "export PATH=$PATH:/usr/lib/chromium-browser/"
-
-script:
-  - bundle exec rake db:setup
-  - bundle exec rspec
+    - name: 'Tests'
+      addons:
+        apt:
+          sources:
+            - google-chrome
+          packages:
+            - google-chrome-stable
+      services:
+        - postgresql
+        - redis-server
+      before_install:
+        - cp config/database.yml.sample config/database.yml
+        - cp .env.test .env
+        - sudo apt-get update
+        - sudo apt-get install chromium-chromedriver
+      before_script:
+        - "export PATH=$PATH:/usr/lib/chromium-browser/"
+        - bundle exec rake db:create
+        - bundle exec rake db:schema:load
+      script:
+        - bundle exec rspec
