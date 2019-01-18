@@ -8,8 +8,6 @@ end
 
 i2p
 
-Option.create!(name: 'fail_option')
-
 puts "Was find or created option #{i2p.name}"
 puts '----------------------------------'
 
